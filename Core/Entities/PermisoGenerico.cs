@@ -5,8 +5,11 @@ using System.Threading.Tasks;
 
 namespace Core.Entities
 {
-    public class PermisoGenerico
+    public class PermisoGenerico : BaseEntity
     {
+        public string NombrPermiso {get; set;}
+
+        public ICollection<GenericovsSubmodulo> GenericovsSubmodulos {get; set;}
         
     }
 }
