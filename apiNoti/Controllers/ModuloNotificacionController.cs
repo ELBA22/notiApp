@@ -46,7 +46,7 @@ namespace apiNoti.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<ModuloNotificacionDto>>Post(ModuloNotificacionDto moduloNotificacionDto)
         {
-            var moduloNotificacion = _mapper.Map<ModuloNotificacion>(moduloNotificacionDto);
+            var moduloNotificacion = _mapper.Map<MNotificacion>(moduloNotificacionDto);
 
             if(moduloNotificacionDto.FechaCreacion == DateTime.MinValue)
             {

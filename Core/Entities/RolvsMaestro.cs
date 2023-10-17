@@ -13,6 +13,5 @@ namespace Core.Entities
 
         public MMaestro ModulosMaestros {get; set;}
         public int IdMMaestro {get; set;}
-        public object IdMaestro { get; set; }
     }
 }

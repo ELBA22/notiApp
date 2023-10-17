@@ -8,7 +8,7 @@ using Infrastructure.UnitOfWork;
 
 namespace apiNoti.Extensions
 {
-    public class ApplicationServiceExtension
+    public static class ApplicationServiceExtension
     {
         public static void ConfigureCors(this  IServiceCollection services) =>
             services.AddCors(options =>

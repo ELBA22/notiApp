@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace apiNoti.Controllers
 {
-    public class PermisoGenericoController :BaseController
+    public class PermisoGenericoController : BaseController
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;

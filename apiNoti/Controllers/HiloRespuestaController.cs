@@ -36,7 +36,7 @@ namespace apiNoti.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<HiloRespuDto>>Get(int id)
         {
-            var hiloRespuesta = await _unitOfWork.HiloRespu.GetByIdAsync(id);
+            var hiloRespuesta = await _unitOfWork.HiloRespuestas.GetByIdAsync(id);
             if(hiloRespuesta == null)
             {
                 return NotFound();
@@ -49,7 +49,7 @@ namespace apiNoti.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<HiloRespuDto>>Post(HiloRespuDto hiloRespuestaDto)
         {
-            var hiloRepuesta = _mapper.Map<HiloRespuesta>(hiloRespuestaDto);
+            var hiloRepuesta = _mapper.Map<HiloRespu>(hiloRespuestaDto);
 
             if(hiloRespuestaDto.FechaCreacion == DateTime.MinValue)
             {
@@ -74,14 +74,14 @@ namespace apiNoti.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<HiloRespueDto>> Put(int id, [FromBody] HiloRespuestaDto hiloRespuestaDto)
+        public async Task<ActionResult<HiloRespuDto>> Put(int id, [FromBody] HiloRespuDto hiloRespuestaDto)
         {
             if(hiloRespuestaDto == null)
             {
                 return NotFound();
             }
             var mascotas = _mapper.Map<HiloRespu>(hiloRespuestaDto);
-            _unitOfWork.HiloRespu.Update(mascotas);
+            _unitOfWork.HiloRespuestas.Update(mascotas);
             await _unitOfWork.SaveAsync();
             return hiloRespuestaDto;
         }
@@ -90,12 +90,12 @@ namespace apiNoti.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult>Delete(int id)
         {
-            var hiloRespuesta = await _unitOfWork.HiloRespu.GetByIdAsync(id);
+            var hiloRespuesta = await _unitOfWork.HiloRespuestas.GetByIdAsync(id);
             if(hiloRespuesta == null)
             {
                 return NotFound();
             }
-            _unitOfWork.HiloRespu.Remove(hiloRespuesta);
+            _unitOfWork.HiloRespuestas.Remove(hiloRespuesta);
             await _unitOfWork.SaveAsync();
             return NoContent();
         }   

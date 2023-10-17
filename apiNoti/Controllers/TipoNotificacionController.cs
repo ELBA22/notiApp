@@ -25,7 +25,7 @@ namespace apiNoti.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<IEnumerable<TipoNotificacionDto>>>Get()
         {
-            var tipoNotificaciones = await _unitOfWork.TiposNotificaciones.GetAllAsync();
+            var tipoNotificaciones = await _unitOfWork.TipoNotificaciones.GetAllAsync();
             return _mapper.Map<List<TipoNotificacionDto>>(tipoNotificaciones);
         }
         [HttpGet("{id}")]
@@ -34,7 +34,7 @@ namespace apiNoti.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<TipoNotificacionDto>>Get(int id)
         {
-            var tipoNotificacion = await _unitOfWork.TiposNotificaciones.GetByIdAsync(id);
+            var tipoNotificacion = await _unitOfWork.TipoNotificaciones.GetByIdAsync(id);
             if(tipoNotificacion == null)
             {
                 return NotFound();
@@ -56,7 +56,7 @@ namespace apiNoti.Controllers
             {
                 tipoNotificacionDto.FechaModificacion = DateTime.Now; 
             }
-            this._unitOfWork.TiposNotificaciones.Add(tipoNotificacion);
+            this._unitOfWork.TipoNotificaciones.Add(tipoNotificacion);
             await _unitOfWork.SaveAsync();
             
             if(tipoNotificacion == null)
@@ -77,7 +77,7 @@ namespace apiNoti.Controllers
                 return NotFound();
             }
             var tipoNotificaciones = _mapper.Map<TipoNotificacion>(tipoNotificacionDto);
-            _unitOfWork.TiposNotificaciones.Update(tipoNotificaciones);
+            _unitOfWork.TipoNotificaciones.Update(tipoNotificaciones);
             await _unitOfWork.SaveAsync();
             return tipoNotificacionDto;
         }
@@ -86,12 +86,12 @@ namespace apiNoti.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult>Delete(int id)
         {
-            var tipoNotificacion = await _unitOfWork.TiposNotificaciones.GetByIdAsync(id);
+            var tipoNotificacion = await _unitOfWork.TipoNotificaciones.GetByIdAsync(id);
             if(tipoNotificacion == null)
             {
                 return NotFound();
             }
-            _unitOfWork.TiposNotificaciones.Remove(tipoNotificacion);
+            _unitOfWork.TipoNotificaciones.Remove(tipoNotificacion);
             await _unitOfWork.SaveAsync();
             return NoContent();
         }

@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace apiNoti.Controllers
 {
-    public class EstadovsNotificacionController
+    public class EstadovsNotificacionController : BaseController
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
@@ -26,7 +26,7 @@ namespace apiNoti.Controllers
         public async Task<ActionResult<IEnumerable<EstadovsNotificacionDto>>>Get()
         {
             var estadoVsNotificaciones = await _unitOfWork.EstadovsNotificaciones.GetAllAsync();
-            return _mapper.Map<List<EstadovsNotificacionDto>>(estadovsNotificaciones);
+            return _mapper.Map<List<EstadovsNotificacionDto>>(estadoVsNotificaciones);
         }
         [HttpGet("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]

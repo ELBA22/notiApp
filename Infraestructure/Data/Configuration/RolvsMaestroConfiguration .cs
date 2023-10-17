@@ -19,7 +19,11 @@ namespace Infraestructure.Data.Configuration
 
             builder.HasOne(r => r.Roles)
             .WithMany(r => r.RolesvsMaestros)
-            .HasForeignKey(r => r.IdMaestro);
+            .HasForeignKey(r => r.IdRol);
+
+            builder.HasOne(r => r.ModulosMaestros)
+            .WithMany(r => r.RolesvsMaestros)
+            .HasForeignKey(r => r.IdMMaestro);
 
             builder.Property(f => f.FechaCreacion)
             .HasColumnType("datetime");

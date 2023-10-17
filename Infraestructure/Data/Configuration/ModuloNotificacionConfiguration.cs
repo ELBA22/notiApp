@@ -29,7 +29,7 @@ public class ModuloNotificacionConfiguration : IEntityTypeConfiguration<MNotific
         .WithMany(f => f.ModuloNotificaciones)
         .HasForeignKey( f => f.IdRadicado);
 
-        builder.HasOne(e => e.EstadosNotificaciones)
+        builder.HasOne(e => e.EstadosvsNotificaciones)
         .WithMany(e => e.ModuloNotificaciones)
         .HasForeignKey(e => e.IdEstadoNotificacion);
 

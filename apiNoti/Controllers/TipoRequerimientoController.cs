@@ -2,6 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using apiNoti.Dtos;
+using AutoMapper;
+using Core.Entities;
+using Core.Interfaces;
+using Microsoft.AspNetCore.Mvc;
 
 namespace apiNoti.Controllers
 {
@@ -20,7 +25,7 @@ namespace apiNoti.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<IEnumerable<TipoRequerimientoDto>>>Get()
         {
-            var tipoRequerimientos = await _unitOfWork.TiposRequerimientos.GetAllAsync();
+            var tipoRequerimientos = await _unitOfWork.TipoRequerimientos.GetAllAsync();
             return _mapper.Map<List<TipoRequerimientoDto>>(tipoRequerimientos);
         }
         [HttpGet("{id}")]
@@ -29,7 +34,7 @@ namespace apiNoti.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<TipoRequerimientoDto>>Get(int id)
         {
-            var tipoRequerimiento = await _unitOfWork.TiposRequerimientos.GetByIdAsync(id);
+            var tipoRequerimiento = await _unitOfWork.TipoRequerimientos.GetByIdAsync(id);
             if(tipoRequerimiento == null)
             {
                 return NotFound();
@@ -51,7 +56,7 @@ namespace apiNoti.Controllers
             {
                 tipoRequerimientoDto.FechaModificacion = DateTime.Now; 
             }
-            this._unitOfWork.TiposRequerimientos.Add(tipoRequerimiento);
+            this._unitOfWork.TipoRequerimientos.Add(tipoRequerimiento);
             await _unitOfWork.SaveAsync();
             
             if(tipoRequerimiento == null)
@@ -72,7 +77,7 @@ namespace apiNoti.Controllers
                 return NotFound();
             }
             var tipoRequerimientos = _mapper.Map<TipoRequerimiento>(tipoRequerimientoDto);
-            _unitOfWork.TiposRequerimientos.Update(tipoRequerimientos);
+            _unitOfWork.TipoRequerimientos.Update(tipoRequerimientos);
             await _unitOfWork.SaveAsync();
             return tipoRequerimientoDto;
         }
@@ -81,12 +86,12 @@ namespace apiNoti.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult>Delete(int id)
         {
-            var tipoRequerimiento = await _unitOfWork.TiposRequerimientos.GetByIdAsync(id);
+            var tipoRequerimiento = await _unitOfWork.TipoRequerimientos.GetByIdAsync(id);
             if(tipoRequerimiento == null)
             {
                 return NotFound();
             }
-            _unitOfWork.TiposRequerimientos.Remove(tipoRequerimiento);
+            _unitOfWork.TipoRequerimientos.Remove(tipoRequerimiento);
             await _unitOfWork.SaveAsync();
             return NoContent();
         }

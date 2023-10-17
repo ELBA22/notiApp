@@ -23,7 +23,7 @@ public class MaestrovsSubmoduloConfiguration : IEntityTypeConfiguration<Maestrov
 
         builder.HasOne(p => p.Submodulos)
         .WithMany(p => p.MaestrovsSubmodulos)
-        .HasForeignKey(Parallel => p.IdSubmodulo);
+        .HasForeignKey(p => p.IdSubmodulo);
 
         builder.Property(f => f.FechaCreacion)
         .HasColumnType("datetime");

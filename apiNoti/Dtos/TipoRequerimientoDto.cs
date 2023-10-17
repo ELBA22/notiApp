@@ -13,6 +13,6 @@ namespace apiNoti.Dtos
 
         public DateTime FechaCreacion {get; set;}
 
-        public DateTime FechaModificacion {get, set;}
+        public DateTime FechaModificacion {get; set;}
     }
 }

@@ -8,12 +8,11 @@ namespace Core.Entities
     public class MaestrovsSubmodulo : BaseEntity
     {
         public MMaestro ModulosMaestros {get; set;}
-        public int IdMMaestro {get; set;}
+        public int IdModuloMaestro {get; set;}
 
         public Submodulo Submodulos {get; set;}
         public int IdSubmodulo {get; set;}
 
         public ICollection<GenericovsSubmodulo> GenericovsSubmodulos {get; set;}
-        public object IdModuloMaestro { get; set; }
     }
 }

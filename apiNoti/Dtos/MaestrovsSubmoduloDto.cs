@@ -3,8 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace apiNoti.Dtos
-{
+namespace apiNoti.Dtos;
     public class MaestrovsSubmoduloDto
     {
         public int Id {get; set;}
@@ -12,8 +11,7 @@ namespace apiNoti.Dtos
 
         public int IdSubmodulo {get; set;}
 
-        public DateTime FechaCreacion {get; set;
+        public DateTime FechaCreacion {get; set;}
         
         public DateTime FechaModificacion {get; set;}
     }
-}

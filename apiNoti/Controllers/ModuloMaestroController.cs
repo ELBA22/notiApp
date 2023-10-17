@@ -12,6 +12,9 @@ namespace apiNoti.Controllers
 {
     public class ModuloMaestroController :BaseController
     {
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly IMapper _mapper;
+
         private ModuloMaestroController(IUnitOfWork unitOfWork, IMapper mapper)
         {
             _unitOfWork = unitOfWork;

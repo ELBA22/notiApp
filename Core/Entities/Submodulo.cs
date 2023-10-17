@@ -9,7 +9,6 @@ namespace Core.Entities
     {
         public string NombreSubModulo {get; set;}
 
-        public ICollection<MaestrovsSubmodulo> maestrovsSubmodulos {get; set;}
-        public object MaestrovsSubmodulos { get; set; }
+        public ICollection<MaestrovsSubmodulo> MaestrovsSubmodulos {get; set;}
     }
 }
