@@ -139,7 +139,6 @@ namespace Core.Interfaces
     }
 }
 ```
-    
 
 # Repositorios, GenericRepository
 Siguiendo con los pasos nos vamos a infraestructure y creamos un folder, llamado Repositories en el cual se crearan clases repositorioas para todas las entidades, y un GenericRepository.
@@ -147,7 +146,7 @@ Siguiendo con los pasos nos vamos a infraestructure y creamos un folder, llamado
 
 ![Image](<Captura de pantalla 2023-10-18 004634.png>)
 
-Alli mismo implementamos la carpeta de Unidades de trabajos.
+Alli mismo implementamos la carpeta de Unidades de trabajos, se utilizan para agrupar y coordinar operaciones relacionales con la persistencia de datos.
 
 ```
 using System;
@@ -382,6 +381,265 @@ namespace Infrastructure.UnitOfWork
     }
 }
 ```
+
+# Dtos.
+Luego de haber hecho todos los pasos anteriores, creamos los Dtos en la carpeta api, se usan para especificar la informacion que yo quiero mostrar, o transferir los datos entre los componentes de manera optimizada.
+```
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
+namespace apiNoti.Dtos
+{
+    public class AuditoriaDto
+    {
+        public int Id {get; set;}
+
+        public string NombreUsuario {get; set;}
+
+        public int DesAccion {get; set;}
+        public DateTime FechaCreacion {get; set;}
+
+        public DateTime FechaModificacion {get; set;}
+    }
+}
+```
+## Configuracion de librerias.
+Se agregan los servicios de la libreria en el archivo Program.cs
+```
+builder.Services.AddAutoMapper(Assembly.GetEntryAssembly());
+builder.Services.ConfigureCors();
+builder.Services.AddApplicationServices();
+```
+
+# Extensions
+Implementación de rate limiting.
+```
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using AspNetCoreRateLimit;
+using Core.Interfaces;
+using Infrastructure.UnitOfWork;
+
+namespace apiNoti.Extensions
+{
+    public static class ApplicationServiceExtension
+    {
+        public static void ConfigureCors(this  IServiceCollection services) =>
+            services.AddCors(options =>
+            {
+                options.AddPolicy(
+                    "CorsPolicy",
+                    builder =>
+                        builder
+                            .AllowAnyOrigin() //WithOrigins("https://domini.com")
+                            .AllowAnyMethod() //WithMethods(*GET", "POST")
+                            .AllowAnyHeader()
+                );
+            });
+        public static void AddApplicationServices(this IServiceCollection services)
+        {
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
+        }
+        public static void ConfigureRatelimiting(this IServiceCollection services)
+        {
+            services.AddMemoryCache();
+            services.AddSingleton<IRateLimitConfiguration, RateLimitConfiguration>();
+            services.AddInMemoryRateLimiting();
+            services.Configure<IpRateLimitOptions>(options =>
+            {
+                options.EnableEndpointRateLimiting = true;
+                options.StackBlockedRequests = false;
+                options.HttpStatusCode = 429;
+                options.RealIpHeader = "X-Real-IP";
+                options.GeneralRules = new List<RateLimitRule>
+                {
+                    new RateLimitRule
+                    {
+                        Endpoint = "*",
+                        Period = "10s",
+                        Limit = 2
+                    } 
+                };
+            });
+        }
+    }
+}
+```
+
+# Controllers
+Se define el CRUD(Crear, leer, actualizar, eliminar) las peticiones.
+```
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using apiNoti.Dtos;
+using AutoMapper;
+using Core.Entities;
+using Core.Interfaces;
+using Microsoft.AspNetCore.Mvc;
+
+namespace apiNoti.Controllers
+{
+    public class AuditoriaController :BaseController
+    {
+        private readonly IUnitOfWork _unitOfWork;
+
+        private readonly IMapper _mapper;
+
+        public AuditoriaController(IUnitOfWork unitOfWork, IMapper mapper)
+        {
+            _unitOfWork = unitOfWork;
+            _mapper = mapper;
+        }
+
+        [HttpGet("{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<AuditoriaDto>>Get(int id)
+        {
+            var mascota = await _unitOfWork.Auditorias.GetByIdAsync(id);
+            if(mascota == null)
+            {
+                return NotFound();
+            }
+            return _mapper.Map<AuditoriaDto>(mascota);
+        }
+        [HttpGet]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<IEnumerable<AuditoriaDto>>> Get()
+        {
+            var auditorias = await _unitOfWork.Auditorias.GetAllAsync();
+            return _mapper.Map<List<AuditoriaDto>>(auditorias);
+        }
+
+        [HttpPost]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<AuditoriaDto>>Post(AuditoriaDto auditoriaDto)
+        {
+            var auditoria = _mapper.Map<Auditoria>(auditoriaDto);
+
+            if(auditoriaDto.FechaCreacion == DateTime.MinValue)
+            {
+                auditoriaDto.FechaCreacion = DateTime.Now; 
+            }
+            if(auditoriaDto.FechaModificacion == DateTime.MinValue)
+            {
+                auditoriaDto.FechaModificacion = DateTime.Now; 
+            }
+            this._unitOfWork.Auditorias.Add(auditoria);
+            await _unitOfWork.SaveAsync();
+            
+            if(auditoria == null)
+            {
+                return BadRequest();
+            }
+            auditoriaDto.Id = auditoria.Id;
+            return CreatedAtAction(nameof(Post), new {id = auditoriaDto.Id}, auditoriaDto);
+        }
+
+        [HttpPut("{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<AuditoriaDto>> Put(int id, [FromBody] AuditoriaDto auditoriaDto)
+        {
+            if(auditoriaDto == null)
+            {
+                return NotFound();
+            }
+            var auditorias = _mapper.Map<Auditoria>(auditoriaDto);
+            _unitOfWork.Auditorias.Update(auditorias);
+            await _unitOfWork.SaveAsync();
+            return auditoriaDto;
+        }
+        
+        [HttpDelete("{id}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult>Delete(int id)
+        {
+            var auditoria = await _unitOfWork.Auditorias.GetByIdAsync(id);
+            if(auditoria == null)
+            {
+                return NotFound();
+            }
+            _unitOfWork.Auditorias.Remove(auditoria);
+            await _unitOfWork.SaveAsync();
+            return NoContent();
+        }
+        
+    }
+}
+```
+# Profiles.
+Contiene el mapeo de entidades.
+
+## MappingProfiles.
+```
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using apiNoti.Dtos;
+using AutoMapper;
+using Core.Entities;
+using Microsoft.AspNetCore.Http.HttpResults;
+
+namespace apiNoti.Profiles
+{
+    public class MappingProfiles : Profile
+    {
+        public MappingProfiles()
+        {
+            CreateMap<Auditoria, AuditoriaDto>().ReverseMap();
+            CreateMap<BlockChain, BlockChainDto>().ReverseMap();
+            CreateMap<EstadovsNotificacion, EstadovsNotificacionDto>().ReverseMap();
+            CreateMap<Formato, FormatoDto>().ReverseMap();
+            CreateMap<GenericovsSubmodulo, GenericovsSubmoduloDto>().ReverseMap();
+            CreateMap<HiloRespu, HiloRespuDto>().ReverseMap();
+            CreateMap<MaestrovsSubmodulo, MaestrovsSubmoduloDto>().ReverseMap();
+            CreateMap<MMaestro, MMaestroDto>().ReverseMap();
+            CreateMap<MNotificacion, ModuloNotificacionDto>().ReverseMap();
+            CreateMap<PermisoGenerico, PermisoGenericoDto>().ReverseMap();
+            CreateMap<Radicado, RadicadoDto>().ReverseMap();
+            CreateMap<Rol, RolDto>().ReverseMap();
+            CreateMap<RolvsMaestro, RolvsMaestroDto>().ReverseMap();
+            CreateMap<Submodulo, SubmoduloDto>().ReverseMap();
+            CreateMap<TipoNotificacion, TipoNotificacionDto>().ReverseMap();
+            CreateMap<TipoRequerimiento, TipoRequerimientoDto>().ReverseMap();
+        }
+    }
+}
+```
+
+# COMANDO MIGRACION.
+```
+dotnet ef migrations add NombreMigracion --project ./Infraestructure/ --startup-project ./apiNoti/ 
+--output-dir ./Data/Migrations 
+```
+## Comando para actualizar base de datos en la migracion.
+```
+dotnet ef database update --project ./Infraestructure/ --startup-project ./apiNoti/
+```
+
+## Recuerde: 
+Para que se puedan permitir las migraciones se necesita instalar el paquete dotnet ef.
+```
+dotnet ef tool install --global dotnet -ef
+```
+
+
+
+
+
 
 
 
