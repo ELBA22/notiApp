@@ -74,6 +74,14 @@ namespace apiNoti.Controllers
         {
             if(genericovsSubmoduloDto == null)
             {
+                return BadRequest();
+            }
+            if (genericovsSubmoduloDto.Id == 0)
+            {
+                genericovsSubmoduloDto.Id = id;
+            }
+            if(genericovsSubmoduloDto.Id != id)
+            {
                 return NotFound();
             }
             var genericovsSubmodulos = _mapper.Map<GenericovsSubmodulo>(genericovsSubmoduloDto);

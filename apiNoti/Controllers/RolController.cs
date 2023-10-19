@@ -74,6 +74,14 @@ namespace apiNoti.Controllers
         {
             if(rolDto == null)
             {
+                return BadRequest();
+            }
+            if (rolDto.Id == 0)
+            {
+                rolDto.Id = id;
+            }
+            if (rolDto.Id != id)
+            {
                 return NotFound();
             }
             var roles = _mapper.Map<Rol>(rolDto);

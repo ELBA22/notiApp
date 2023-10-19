@@ -74,6 +74,14 @@ namespace apiNoti.Controllers
         {
             if(tipoRequerimientoDto == null)
             {
+                return BadRequest();
+            }
+            if (tipoRequerimientoDto.Id == 0)
+            {
+                tipoRequerimientoDto.Id = id;
+            }
+            if (tipoRequerimientoDto.Id != id)
+            {
                 return NotFound();
             }
             var tipoRequerimientos = _mapper.Map<TipoRequerimiento>(tipoRequerimientoDto);

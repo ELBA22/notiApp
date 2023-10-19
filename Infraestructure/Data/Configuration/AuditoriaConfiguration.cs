@@ -22,7 +22,8 @@ public class AuditoriaConfiguration : IEntityTypeConfiguration<Auditoria>
             .HasMaxLength(50);
 
             builder.Property(p => p.DesAccion)
-            .HasColumnType("bigint"); //numero grande
+            .IsRequired()
+            .HasColumnType("int"); 
 
             builder.Property(f => f.FechaCreacion)
             .HasColumnType("datetime");

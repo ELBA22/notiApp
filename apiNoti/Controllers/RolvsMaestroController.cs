@@ -74,6 +74,14 @@ namespace apiNoti.Controllers
         {
             if(rolvsMaestroDto == null)
             {
+                return BadRequest();
+            }
+            if (rolvsMaestroDto.Id == 0)
+            {
+                rolvsMaestroDto.Id = id;
+            }
+            if (rolvsMaestroDto.Id != id)
+            {
                 return NotFound();
             }
             var rolvsMaestros = _mapper.Map<RolvsMaestro>(rolvsMaestroDto);

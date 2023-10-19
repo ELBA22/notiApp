@@ -74,13 +74,23 @@ namespace apiNoti.Controllers
         {
             if(formatoDto == null)
             {
+                return BadRequest();
+            }
+            if(formatoDto.Id == 0)
+            {
+                formatoDto.Id = id;
+            }
+            if (formatoDto.Id != id)
+            {
                 return NotFound();
             }
+
             var mascotas = _mapper.Map<Formato>(formatoDto);
             _unitOfWork.Formatos.Update(mascotas);
             await _unitOfWork.SaveAsync();
             return formatoDto;
         }
+        
         [HttpDelete("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]

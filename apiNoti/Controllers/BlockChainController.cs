@@ -74,6 +74,14 @@ namespace apiNoti.Controllers
         {
             if(blockChainDto == null)
             {
+                return BadRequest();
+            }
+            if (blockChainDto.Id == 0)
+            {
+                blockChainDto.Id = id;
+            }
+            if (blockChainDto.Id != id)
+            {
                 return NotFound();
             }
             var blockChains = _mapper.Map<BlockChain>(blockChainDto);

@@ -74,6 +74,14 @@ namespace apiNoti.Controllers
         {
             if(permisoGenericoDto == null)
             {
+                return BadRequest();
+            }
+            if(permisoGenericoDto.Id == 0)
+            {
+                permisoGenericoDto.Id = id;
+            }
+            if (permisoGenericoDto.Id != id)
+            {
                 return NotFound();
             }
             var permisoGenericos = _mapper.Map<PermisoGenerico>(permisoGenericoDto);

@@ -11,7 +11,7 @@ namespace apiNoti.Profiles
 {
     public class MappingProfiles : Profile
     {
-        protected MappingProfiles()
+        public MappingProfiles()
         {
             CreateMap<Auditoria, AuditoriaDto>().ReverseMap();
             CreateMap<BlockChain, BlockChainDto>().ReverseMap();

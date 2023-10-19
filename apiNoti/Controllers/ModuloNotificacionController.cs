@@ -74,6 +74,14 @@ namespace apiNoti.Controllers
         {
             if(moduloNotificacionDto == null)
             {
+                return BadRequest();
+            }
+            if(moduloNotificacionDto.Id == 0)
+            {
+                moduloNotificacionDto.Id = id;
+            }
+            if(moduloNotificacionDto.Id != id)
+            {
                 return NotFound();
             }
             var moduloNotificaciones = _mapper.Map<MNotificacion>(moduloNotificacionDto);

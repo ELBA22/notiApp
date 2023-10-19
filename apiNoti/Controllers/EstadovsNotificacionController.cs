@@ -74,6 +74,14 @@ namespace apiNoti.Controllers
         {
             if(estadovsNotificacionDto == null)
             {
+                return BadRequest();
+            }
+            if (estadovsNotificacionDto.Id == 0)
+            {
+                estadovsNotificacionDto.Id = id;
+            }
+            if (estadovsNotificacionDto.Id != id)
+            {
                 return NotFound();
             }
             var estadovsNotificaciones = _mapper.Map<EstadovsNotificacion>(estadovsNotificacionDto);

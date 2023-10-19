@@ -35,6 +35,16 @@ namespace apiNoti.Controllers
             }
             return _mapper.Map<AuditoriaDto>(mascota);
         }
+
+        [HttpGet]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<IEnumerable<AuditoriaDto>>> Get()
+        {
+            var auditorias = await _unitOfWork.Auditorias.GetAllAsync();
+            return _mapper.Map<List<AuditoriaDto>>(auditorias);
+        }
+
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -60,6 +70,7 @@ namespace apiNoti.Controllers
             auditoriaDto.Id = auditoria.Id;
             return CreatedAtAction(nameof(Post), new {id = auditoriaDto.Id}, auditoriaDto);
         }
+
         [HttpPut("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -68,6 +79,14 @@ namespace apiNoti.Controllers
         {
             if(auditoriaDto == null)
             {
+                return BadRequest();
+            }
+            if (auditoriaDto.Id == 0)
+            {
+                auditoriaDto.Id = id;
+            }
+            if (auditoriaDto.Id != id)
+            {
                 return NotFound();
             }
             var auditorias = _mapper.Map<Auditoria>(auditoriaDto);
@@ -75,6 +94,7 @@ namespace apiNoti.Controllers
             await _unitOfWork.SaveAsync();
             return auditoriaDto;
         }
+        
         [HttpDelete("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]

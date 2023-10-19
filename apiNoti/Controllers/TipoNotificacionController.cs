@@ -74,6 +74,14 @@ namespace apiNoti.Controllers
         {
             if(tipoNotificacionDto == null)
             {
+                return BadRequest();
+            }
+            if (tipoNotificacionDto.Id == 0)
+            {
+                tipoNotificacionDto.Id = id;
+            }
+            if (tipoNotificacionDto.Id != id)
+            {
                 return NotFound();
             }
             var tipoNotificaciones = _mapper.Map<TipoNotificacion>(tipoNotificacionDto);

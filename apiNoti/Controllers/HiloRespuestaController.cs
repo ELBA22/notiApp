@@ -78,6 +78,14 @@ namespace apiNoti.Controllers
         {
             if(hiloRespuestaDto == null)
             {
+                return BadRequest();
+            }
+            if(hiloRespuestaDto.Id ==0)
+            {
+                hiloRespuestaDto.Id = id;
+            }
+            if (hiloRespuestaDto.Id != id)
+            {
                 return NotFound();
             }
             var mascotas = _mapper.Map<HiloRespu>(hiloRespuestaDto);

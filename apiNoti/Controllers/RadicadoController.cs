@@ -74,6 +74,14 @@ namespace apiNoti.Controllers
         {
             if(radicadoDto == null)
             {
+                return BadRequest();
+            }
+            if (radicadoDto.Id == 0)
+            {
+                radicadoDto.Id = id;
+            }
+            if(radicadoDto.Id != id)
+            {
                 return NotFound();
             }
             var radicados = _mapper.Map<Radicado>(radicadoDto);

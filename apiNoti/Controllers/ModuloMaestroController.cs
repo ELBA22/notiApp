@@ -75,6 +75,14 @@ namespace apiNoti.Controllers
         {
             if(moduloMaestroDto == null)
             {
+                return BadRequest();
+            }
+            if (moduloMaestroDto.Id == 0)
+            {
+                moduloMaestroDto.Id = id;
+            }
+            if (moduloMaestroDto.Id != id)
+            {
                 return NotFound();
             }
             var moduloMaestros = _mapper.Map<MMaestro>(moduloMaestroDto);
